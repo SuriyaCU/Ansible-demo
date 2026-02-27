@@ -1,0 +1,29 @@
+---
+- name: Configure Ubuntu Web Server
+  hosts: all
+  become: yes  # Runs commands with sudo privileges
+  vars:
+    web_server_package: nginx
+
+  tasks:
+    - name: Update apt cache and upgrade all packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Install Nginx
+      apt:
+        name: "{{ web_server_package }}"
+        state: present
+
+    - name: Ensure Nginx is started and enabled on boot
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Create a basic landing page
+      copy:
+        content: "<h1>Welcome to my Terraform + Ansible Server!</h1>"
+        dest: /var/www/html/index.html
+        mode: '0644'
